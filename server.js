@@ -57,7 +57,10 @@ function setupExpress() {
 
 	// Routes
 	app.get('/', (req, res) => {
-		res.render('index', {title: "DnD Stuff"});
+		if (is_mobile(req)) 
+			res.render('mobile', {title: "DnD Stuff"});
+		else
+			res.render('index', {title: "DnD Stuff"});
 	});
 
 	http.listen(conf.PORT, conf.HOST, () => {
