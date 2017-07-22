@@ -56,6 +56,11 @@ block scripts
 				if (socket.id === opts.id) {
 					$("#number").html(opts.value);
 				}
+
+				setTimeout(() => {
+					console.log("Clearing badge: " + "#client-" + socket.id + "-badge");
+					$("#client-" + socket.id + "-badge").html("");
+				}, 30 * 1000);
 			});
 
 			socket.on('new_member', (client) => {
