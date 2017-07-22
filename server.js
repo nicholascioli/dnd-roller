@@ -29,9 +29,10 @@ function socketHandler(socket) {
 		delete clients[socket.id];
 	});
 
-	socket.on('roll', (die) => {
-		console.log("Roll from: " + clients[socket.id].name + " | " + die);
-		io.emit('updateRoll', {value: Math.floor(Math.random() * die + 1), id: socket.id});
+	socket.on('roll', (opts) => {
+		var rand = Math.floor(Math.random() * opts.value + 1) + parseInt(opts.modifier);
+		console.log("Roll from: " + clients[socket.id].name + " | " + opts.value + ":" + opts.modifier + ":" + rand);
+		io.emit('updateRoll', {value: rand, id: socket.id});
 	});
 
 	socket.on('update_name', (name) => {

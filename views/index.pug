@@ -13,10 +13,10 @@ block content
 			div(class="row")
 				div(class="col-lg-6")
 					div(class="input-group")
+						input(type="number", class="form-control", placeholder="Modifier", id="roll-modifier-input")
 						input(type="number", class="form-control", placeholder="# of die sides", id="roll-input")
 						span(class="input-group-btn")
 							button(type="button", class="btn btn-primary", id="roll") Roll
-
 
 block scripts
 	script(type='text/javascript').
@@ -79,11 +79,14 @@ block scripts
 			};
 
 			function sendRoll() {
+				var mod = $('#roll-modifier-input').val();
 				var val = $('#roll-input').val();
-				if (!val.match(/^[0-9]+$/)) {
+				if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
 					$("#number").html("Not a valid die number");
+				} else if (!mod.match(/^[0-9]+$/) || mod < 0) {
+					$("#number").html("Not a valid modifier");
 				} else {
-					socket.emit('roll', val);
+					socket.emit('roll', {value: val, modifier: mod});
 				}
 			}
 
