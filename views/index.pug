@@ -44,8 +44,11 @@ block scripts
 		$(() => {
 			var socket = io();
 			var timeouts = {};
-			var shortcuts = JSON.parse(window.localStorage.shortcuts) || {};
+			var shortcuts = {};
 			var delete_shortcut = false;
+
+			if (window.localStorage.shortcuts) 
+				shortcuts = JSON.parse(window.localStorage.shortcuts);
 
 			for (var s in shortcuts) {
 				var opts = shortcuts[s];
@@ -200,7 +203,7 @@ block scripts
 					if (delete_shortcut) {
 						b.remove();
 						delete shortcuts[opts.name];
-						
+
 						window.localStorage.shortcuts = JSON.stringify(shortcuts);
 					} else {
 						sendRoll(opts);
