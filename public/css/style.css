@@ -11,3 +11,11 @@ a {
 	text-decoration: none;
 	font-weight: bold;
 }
+
+.clickable {
+	cursor: pointer;
+}
+
+.pad-bottom {
+	padding-bottom: 1em;
+}
