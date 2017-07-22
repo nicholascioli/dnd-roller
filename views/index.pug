@@ -5,7 +5,7 @@ block content
 	
 	div(class="row")
 		div(class="col-xs-2 inverse left")
-			h2 Users
+			h2 HEROS
 			div(class="list-group", id="users")
 
 		div(class="col-xs-8 col-md-10 jumbotron")
@@ -83,7 +83,7 @@ block scripts
 				var val = $('#roll-input').val();
 				if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
 					$("#number").html("Not a valid die number");
-				} else if (!mod.match(/^[0-9]+$/) || mod < 0) {
+				} else if (!mod.match(/^(-)?[0-9]+$/)) {
 					$("#number").html("Not a valid modifier");
 				} else {
 					socket.emit('roll', {value: val, modifier: mod});
