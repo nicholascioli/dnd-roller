@@ -1,0 +1,106 @@
+extends base
+
+block content
+	h1 DnD Stuff
+	
+	div(class="row")
+		div(class="col-xs-2 inverse left")
+			h2 Users
+			div(class="list-group", id="users")
+
+		div(class="col-xs-8 col-md-10 jumbotron")
+			h1(id="number")
+			div(class="row")
+				div(class="col-lg-6")
+					div(class="input-group")
+						input(type="number", class="form-control", placeholder="# of die sides", id="roll-input")
+						span(class="input-group-btn")
+							button(type="button", class="btn btn-primary", id="roll") Roll
+
+
+block scripts
+	script(type='text/javascript').
+		$(() => {
+			var socket = io();
+			console.log("CONNECTED");
+
+			$("#roll").click(() => {
+				sendRoll();
+			});
+
+			socket.on('connect', () => {
+				setTimeout(() => {
+					$("#client-" + socket.id).addClass("active");
+					$("#client-" + socket.id).click(() => {
+						$("#client-" + socket.id + "-input").val($("#client-" + socket.id + "-name").html());
+						toggleName(socket.id);
+					})
+				}, 250);
+			});
+
+			socket.on('populate', (clients) => {
+				$.each(clients, function (key, data) {
+					addMem(data.id, data.name);
+				});
+			});
+
+			socket.on('updateRoll', (opts) => {
+				console.log("Updating roll: ", opts);
+				$("#client-" + opts.id + "-badge").html(opts.value);
+
+				if (socket.id === opts.id) {
+					$("#number").html(opts.value);
+				}
+			});
+
+			socket.on('new_member', (client) => {
+				addMem(client.id, client.name);
+			});
+
+			socket.on('del_member', (client) => {
+				$('#client-' + client.id).remove();
+			});
+
+			socket.on('update_name', (opts) => {
+				console.log("Updating name: ", opts);
+				$('#client-' + opts.id + "-name").html(opts.name);
+			});
+
+			function addMem(id, name) {
+				$('#users').append(
+					'<a id="client-' + id +'" class="inverse list-group-item">' + 
+					'<span class="badge" id="client-' + id + '-badge"></span><span id="client-' + id + '-name">' + name + '</span></a>' +
+					'<input type="text" id="client-' + id + '-input" style="display:none" class="form-control">'
+				);
+
+				$('#client-' + id + '-input').keyup(function (event) {
+					shouldSubmit(id, event);
+				});
+			};
+
+			function sendRoll() {
+				var val = $('#roll-input').val();
+				if (!val.match(/^[0-9]+$/)) {
+					$("#number").html("Not a valid die number");
+				} else {
+					socket.emit('roll', val);
+				}
+			}
+
+			function toggleName(id) {
+				$("#client-" + id).toggle();
+				$("#client-" + id + "-input").toggle();
+			}
+
+			function updateName(id) {
+				socket.emit("update_name", $("#client-" + id + "-input").val());
+			}
+
+			function shouldSubmit(id, event) {
+				event.which = event.which || event.keyCode;
+				if (event.which === 13) {
+					updateName(id);
+					toggleName(id);
+				}
+			}
+		});

@@ -1,0 +1,18 @@
+doctype html
+html(lang="en")
+	head
+		title= title
+		link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/style.css')
+
+	body
+		div.container
+			block content
+	
+	// Include all needed scripts
+	script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')
+	script(type='text/javascript', src='/js/jquery-3.2.1.min.js')
+	script(type='text/javascript', src='/js/bootstrap.min.js')
+
+	// Allow for custom scripts per page
+	block scripts

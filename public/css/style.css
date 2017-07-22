@@ -1,0 +1,13 @@
+.inverse {
+	background-color: #333333;
+	color: white;
+}
+
+body {
+	background-color: white;
+}
+
+a {
+	text-decoration: none;
+	font-weight: bold;
+}
