@@ -5,7 +5,7 @@ block content
 	
 	div(class="row")
 		div(class="col-xs-2 inverse left")
-			h2 HEROS
+			h2 HEROES
 			div(class="list-group", id="users")
 
 		div(class="col-xs-8 col-md-10 jumbotron")
@@ -79,7 +79,7 @@ block scripts
 			};
 
 			function sendRoll() {
-				var mod = $('#roll-modifier-input').val();
+				var mod = $('#roll-modifier-input').val() || 0;
 				var val = $('#roll-input').val();
 				if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
 					$("#number").html("Not a valid die number");
