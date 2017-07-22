@@ -34,7 +34,12 @@ block scripts
 					$("#client-" + socket.id).click(() => {
 						$("#client-" + socket.id + "-input").val($("#client-" + socket.id + "-name").html());
 						toggleName(socket.id);
-					})
+					});
+
+					if (window.localStorage.name) {
+						$("#client-" + socket.id + "-name").html(window.localStorage.name);
+						socket.emit("update_name", window.localStorage.name);
+					}
 				}, 250);
 			});
 
@@ -79,7 +84,7 @@ block scripts
 			};
 
 			function sendRoll() {
-				var mod = $('#roll-modifier-input').val() || 0;
+				var mod = $('#roll-modifier-input').val() || "0";
 				var val = $('#roll-input').val();
 				if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
 					$("#number").html("Not a valid die number");
@@ -96,6 +101,7 @@ block scripts
 			}
 
 			function updateName(id) {
+				window.localStorage.name = $("#client-" + id + "-input").val();
 				socket.emit("update_name", $("#client-" + id + "-input").val());
 			}
 
