@@ -168,6 +168,7 @@ block scripts
 			};
 
 			function sendRoll(opts) {
+				opts = opts || {};
 				var mod = opts.mod || $('#roll-modifier-input').val() || "0";
 				var val = opts.die || $('#roll-input').val();
 				if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
