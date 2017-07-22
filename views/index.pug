@@ -44,9 +44,13 @@ block scripts
 		$(() => {
 			var socket = io();
 			var timeouts = {};
-			var shortcuts = {};
+			var shortcuts = JSON.parse(window.localStorage.shortcuts) || {};
 			var delete_shortcut = false;
-			console.log("CONNECTED");
+
+			for (var s in shortcuts) {
+				var opts = shortcuts[s];
+				appendShortcut(opts);
+			}
 
 			$("#roll").click(() => {
 				sendRoll();
@@ -89,16 +93,8 @@ block scripts
 					$("#number").html("That shortcut already exists");
 				} else {
 					shortcuts[opts.name] = opts;
-					var b = $("<button class='btn btn-info' id='btn-" + opts.name + "'>" + opts.name + "</button>");
-					b.click(() => {
-						if (delete_shortcut) {
-							b.remove();
-							delete shortcuts[opts.name];
-						} else {
-							sendRoll(opts);
-						}
-					});
-					b.appendTo("#shortcuts");
+					window.localStorage.shortcuts = JSON.stringify(shortcuts);
+					appendShortcut(opts);
 
 					$("#short-name").val("");
 					$("#short-mod").val("");
@@ -196,5 +192,20 @@ block scripts
 					updateName(id);
 					toggleName(id);
 				}
+			}
+
+			function appendShortcut(opts) {
+				var b = $("<button class='btn btn-info' id='btn-" + opts.name + "'>" + opts.name + "</button>");
+				b.click(() => {
+					if (delete_shortcut) {
+						b.remove();
+						delete shortcuts[opts.name];
+						
+						window.localStorage.shortcuts = JSON.stringify(shortcuts);
+					} else {
+						sendRoll(opts);
+					}
+				});
+				b.appendTo("#shortcuts");
 			}
 		});
