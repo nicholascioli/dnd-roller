@@ -46,6 +46,7 @@ $(() => {
 		var opts = {
 			name: $("#short-name").val() || "No Name",
 			mod: $("#short-mod").val() || "0",
+			times: $('#short-times').val() || "1",
 			die: $("#short-die").val() || "20",
 			tool: $("#short-name").val() || ""
 		};
@@ -59,6 +60,7 @@ $(() => {
 
 			$("#short-name").val("");
 			$("#short-mod").val("");
+			$("#short-times").val("");
 			$("#short-die").val("");
 		}
 	});
@@ -131,18 +133,21 @@ $(() => {
 	};
 
 	function sendRoll(opts) {
-		console.log(opts);
+		console.log("OPTS: ", opts);
 		opts = opts || {};
 		var mod = opts.mod || $('#roll-modifier-input').val() || "0";
 		var val = opts.die || $('#roll-input').val();
 		var tip = opts.tool || "Regular Roll";
+		var times = opts.times || $('#roll-times').val() || "1";
 
 		if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
 			$("#number").html("Not a valid die number");
 		} else if (!mod.match(/^(-)?[0-9]+$/)) {
 			$("#number").html("Not a valid modifier");
+		} else if (!times.match(/^[0-9]+$/) || times > 100) {
+			$("#number").html("Not a valid amount of rolls");
 		} else {
-			socket.emit('roll', {value: val, modifier: mod, tooltip: tip});
+			socket.emit('roll', {value: val, modifier: mod, tooltip: tip, times: times});
 		}
 	}
 
