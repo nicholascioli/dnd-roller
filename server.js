@@ -33,8 +33,8 @@ function socketHandler(socket) {
 
 	socket.on('roll', (opts) => {
 		var rand = Math.floor(Math.random() * opts.value + 1) + parseInt(opts.modifier);
-		console.log("Roll from: " + clients[socket.id].name + " | " + opts.value + ":" + opts.modifier + ":" + rand);
-		io.emit('updateRoll', {value: rand, id: socket.id});
+		console.log("Roll from: " + clients[socket.id].name + " | " + opts.value + ":" + opts.modifier + ":" + rand + ":" + opts.tooltip);
+		io.emit('updateRoll', {value: rand, id: socket.id, tooltip: opts.tooltip});
 	});
 
 	socket.on('update_name', (name) => {

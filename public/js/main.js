@@ -46,7 +46,8 @@ $(() => {
 		var opts = {
 			name: $("#short-name").val() || "No Name",
 			mod: $("#short-mod").val() || "0",
-			die: $("#short-die").val() || "20"
+			die: $("#short-die").val() || "20",
+			tool: $("#short-name").val() || ""
 		};
 
 		if (shortcuts.hasOwnProperty(opts.name)) {
@@ -86,6 +87,11 @@ $(() => {
 	socket.on('updateRoll', (opts) => {
 		console.log("Updating roll: ", opts);
 		$("#client-" + opts.id + "-badge").html(opts.value);
+		$('#client-' + opts.id).tooltip('destroy')
+		
+		setTimeout(() => $('#client-' + opts.id).tooltip({
+			title: opts.tooltip
+		}), 250);
 
 		if (socket.id === opts.id) {
 			$("#number").html(opts.value);
@@ -112,7 +118,7 @@ $(() => {
 	});
 
 	function addMem(id, name) {
-		$('<a id="client-' + id +'" class="inverse list-group-item">' + 
+		$('<a id="client-' + id +'" class="inverse list-group-item" data-toggle="tooltip" data-placement="left" title="">' + 
 			'<span class="badge" id="client-' + id + '-badge"></span><span id="client-' + id + '-name">' + name + '</span></a>' +
 			'<input type="text" id="client-' + id + '-input" class="form-control">'
 		).hide().appendTo("#users").slideDown();
@@ -125,15 +131,18 @@ $(() => {
 	};
 
 	function sendRoll(opts) {
+		console.log(opts);
 		opts = opts || {};
 		var mod = opts.mod || $('#roll-modifier-input').val() || "0";
 		var val = opts.die || $('#roll-input').val();
+		var tip = opts.tool || "Regular Roll";
+
 		if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
 			$("#number").html("Not a valid die number");
 		} else if (!mod.match(/^(-)?[0-9]+$/)) {
 			$("#number").html("Not a valid modifier");
 		} else {
-			socket.emit('roll', {value: val, modifier: mod});
+			socket.emit('roll', {value: val, modifier: mod, tooltip: tip});
 		}
 	}
 
