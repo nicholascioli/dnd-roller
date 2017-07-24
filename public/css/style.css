@@ -3,6 +3,10 @@
 	color: white;
 }
 
+.inverse .list-group-item {
+	color: white;
+}
+
 body {
 	background-color: white;
 }
