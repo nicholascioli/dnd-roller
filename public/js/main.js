@@ -105,7 +105,8 @@ $(() => {
 		}), 250);
 
 		if (socket.id === opts.id) {
-			$("#number").html(opts.value);
+			$("#number").html(opts.value + " ");
+			$("#number-special").attr("class", opts.special || "");
 		}
 
 		if (timeouts[opts.id]) clearTimeout(timeouts[opts.id]);
@@ -153,9 +154,6 @@ $(() => {
 		var tip = opts.tool || "Regular Roll";
 		var times = opts.times || $('#roll-times').val() || "1";
 
-		console.log("RAW: ", $('#roll-modifier-input').val());
-		console.log("MOD:", mod);
-
 		socket.emit('roll', {value: val, modifier: mod, tooltip: tip, times: times});
 	}
 
@@ -193,11 +191,10 @@ $(() => {
 	}
 
 	function error(msg) {
-		$("#alert").append(
-			"<div class=\"alert alert-danger alert-dismissible\" role=\"alert\">" +
+		$("<div class=\"alert alert-danger alert-dismissible\" role=\"alert\">" +
 			"<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
 			"<span aria-hidden=\"true\">&times;</span></button>" +
 			"<strong>Error!</strong> " + msg + "</div>"
-		);
+		).prependTo("#alerts").hide().slideDown().delay(3000).slideUp(function () {$(this).remove();});
 	}
 });
