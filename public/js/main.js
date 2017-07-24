@@ -92,7 +92,7 @@ $(() => {
 
 	socket.on('updateRoll', (opts) => {
 		console.log("Updating roll: ", opts);
-		$("#client-" + opts.id + "-badge").html(opts.value);
+		$("#client-" + opts.id + "-badge").html(opts.value).hide().fadeIn();
 		$('#client-' + opts.id).tooltip('destroy');
 
 		if (opts.special !== null) {
@@ -112,7 +112,7 @@ $(() => {
 		if (timeouts[opts.id]) clearTimeout(timeouts[opts.id]);
 		timeouts[opts.id] = setTimeout(() => {
 			console.log("Clearing badge: " + "#client-" + socket.id + "-badge");
-			$("#client-" + opts.id + "-badge").html("");
+			$("#client-" + opts.id + "-badge").fadeOut(function () {$(this).html("");});
 		}, 30 * 1000);
 	});
 
