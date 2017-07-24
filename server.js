@@ -32,15 +32,31 @@ function socketHandler(socket) {
 	});
 
 	socket.on('roll', (opts) => {
-		var rand = 0;
+		// Verify first
+		if (!opts.value.match(/^[0-9]+$/) || opts.value < 1 || opts.value > 100) {
+			socket.emit("present_error", "Not a valid die number");
+			return;
+		} else if (!opts.modifier.match(/^-?[0-9]+$/)) {
+			socket.emit("present_error", "Not a valid modifier");
+			return;
+		} else if (!opts.times.match(/^[0-9]+$/) || opts.times < 1 || opts.times > 100) {
+			socket.emit("present_error", "Not a valid amount of rolls");
+			return;
+		}
 
+		var special = null;
+		var rand = 0;
 		for (let i = 0; i < parseInt(opts.times); ++i) {
-			rand += Math.floor(Math.random() * opts.value + 1);
+			var roll = Math.floor(Math.random() * opts.value + 1);
+			if (i === 0 && parseInt(opts.value) === 20 && roll === 20) special = "glyphicon glyphicon-star";
+			if (i === 0 && parseInt(opts.value) === 20 && roll === 1) special = "glyphicon glyphicon-alert";
+
+			rand += roll;
 		}
 		rand += parseInt(opts.modifier);
 
 		console.log("Roll from: " + clients[socket.id].name + " | " + opts.value + ":" + opts.modifier + ":" + rand + ":" + opts.tooltip + ":" + parseInt(opts.times));
-		io.emit('updateRoll', {value: rand, id: socket.id, tooltip: opts.tooltip});
+		io.emit('updateRoll', {value: rand, id: socket.id, tooltip: opts.tooltip, special: special});
 	});
 
 	socket.on('update_name', (name) => {

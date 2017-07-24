@@ -18,13 +18,17 @@ $(() => {
 
 	$("#add-shortcut").click(() => {
 		var menu = $("#add-shortcut-menu");
-		$("span", "#add-shortcut").toggleClass("glyphicon-plus");
-		$("span", "#add-shortcut").toggleClass("glyphicon-remove");
 
 		if (menu.is(":visible")) {
-			menu.slideUp();
+			menu.slideUp(() => {
+				$("span", "#add-shortcut").toggleClass("glyphicon-plus");
+				$("span", "#add-shortcut").toggleClass("glyphicon-remove");
+			});
 		} else {
-			menu.slideDown();
+			menu.slideDown(() => {
+				$("span", "#add-shortcut").toggleClass("glyphicon-plus");
+				$("span", "#add-shortcut").toggleClass("glyphicon-remove");
+			});
 		}
 	});
 
@@ -89,7 +93,12 @@ $(() => {
 	socket.on('updateRoll', (opts) => {
 		console.log("Updating roll: ", opts);
 		$("#client-" + opts.id + "-badge").html(opts.value);
-		$('#client-' + opts.id).tooltip('destroy')
+		$('#client-' + opts.id).tooltip('destroy');
+
+		if (opts.special !== null) {
+			console.log("SPECIAL: " + opts.special);
+			$("#client-" + opts.id + "-badge").append(" <span class=\"" + opts.special + "\"></span>");
+		}
 		
 		setTimeout(() => $('#client-' + opts.id).tooltip({
 			title: opts.tooltip
@@ -119,6 +128,10 @@ $(() => {
 		$('#client-' + opts.id + "-name").html(opts.name);
 	});
 
+	socket.on('present_error', (msg) => {
+		error(msg);
+	});
+
 	function addMem(id, name) {
 		$('<a id="client-' + id +'" class="inverse list-group-item" data-toggle="tooltip" data-placement="left" title="">' + 
 			'<span class="badge" id="client-' + id + '-badge"></span><span id="client-' + id + '-name">' + name + '</span></a>' +
@@ -140,15 +153,10 @@ $(() => {
 		var tip = opts.tool || "Regular Roll";
 		var times = opts.times || $('#roll-times').val() || "1";
 
-		if (!val.match(/^[0-9]+$/) || val < 1 || val > 100) {
-			$("#number").html("Not a valid die number");
-		} else if (!mod.match(/^(-)?[0-9]+$/)) {
-			$("#number").html("Not a valid modifier");
-		} else if (!times.match(/^[0-9]+$/) || times > 100) {
-			$("#number").html("Not a valid amount of rolls");
-		} else {
-			socket.emit('roll', {value: val, modifier: mod, tooltip: tip, times: times});
-		}
+		console.log("RAW: ", $('#roll-modifier-input').val());
+		console.log("MOD:", mod);
+
+		socket.emit('roll', {value: val, modifier: mod, tooltip: tip, times: times});
 	}
 
 	function toggleName(id) {
@@ -182,5 +190,14 @@ $(() => {
 			}
 		});
 		b.appendTo("#shortcuts");
+	}
+
+	function error(msg) {
+		$("#alert").append(
+			"<div class=\"alert alert-danger alert-dismissible\" role=\"alert\">" +
+			"<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+			"<span aria-hidden=\"true\">&times;</span></button>" +
+			"<strong>Error!</strong> " + msg + "</div>"
+		);
 	}
 });
