@@ -9,6 +9,10 @@
 
 body {
 	background-color: white;
+	-webkit-transition: background-color 1s ease-out;
+	-moz-transition: background-color 1s ease-out;
+	-o-transition: background-color 1s ease-out;
+	transition: background-color 1s ease-out;
 }
 
 a {

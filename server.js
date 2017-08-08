@@ -77,7 +77,10 @@ function socketHandler(socket) {
 		rand += parseInt(opts.modifier);
 
 		console.log("Roll from: " + clients[socket.id].name + " | " + opts.value + ":" + opts.modifier + ":" + rand + ":" + opts.tooltip + ":" + parseInt(opts.times));
-		io.emit('updateRoll', {value: rand, id: socket.id, tooltip: opts.tooltip, special: special});
+		if (opts.hidden)
+			socket.emit('updateRoll', {value: rand, id: socket.id, tooltip: opts.tooltip, special: special});
+		else
+			io.emit('updateRoll', {value: rand, id: socket.id, tooltip: opts.tooltip, special: special});
 	});
 
 	// Updates a user's name

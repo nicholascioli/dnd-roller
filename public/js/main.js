@@ -17,6 +17,7 @@ $(() => {
 	var timeouts = {};
 	var shortcuts = {};
 	var delete_shortcut = false;
+	var shouldHide = false;
 
 	// Store personal preferences in the web browser's localstorage
 	if (window.localStorage.shortcuts) 
@@ -30,6 +31,17 @@ $(() => {
 	// -- On Click listeners for the different buttons --
 	$("#roll").click(() => {
 		sendRoll();
+	});
+
+	$("[name='dm-mode']").bootstrapSwitch('labelText', "DM");
+	$('input[name="dm-mode"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		if (state) {
+			$("body").css("background-color", "#666666");
+			shouldHide = true;
+		} else {
+			$("body").css("background-color", "#FFFFFF");
+			shouldHide = false;
+		}
 	});
 
 	// Toggles visibility of the shortcut menu
@@ -189,14 +201,16 @@ $(() => {
 	//   - die: String | How many sides are on the die
 	//   - tip: String | The tooltip to display
 	//   - times: String | How many times to roll
+	//   - hidden: Bool | Hide the result from other players
 	function sendRoll(opts) {
 		opts = opts || {};
 		var mod = opts.mod || $('#roll-modifier-input').val() || "0";
 		var val = opts.die || $('#roll-input').val();
 		var tip = opts.tool || "Regular Roll";
 		var times = opts.times || $('#roll-times').val() || "1";
+		var hide = opts.hidden || shouldHide || false;
 
-		socket.emit('roll', {value: val, modifier: mod, tooltip: tip, times: times});
+		socket.emit('roll', {value: val, modifier: mod, tooltip: tip, times: times, hidden: hide});
 	}
 
 	// Toggles between diplaying the username and allowing the user to change it
